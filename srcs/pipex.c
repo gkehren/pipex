@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 14:57:37 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/17 16:49:01 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/18 18:19:27 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 	if (argc != 5)
 		return (write(1, "Error\n - Fill all the arguments\n", 33), 1);
 	pipex->file1 = argv[1];
-	pipex->cmd1 = argv[2];
-	pipex->cmd2 = argv[3];
+	pipex->cmd1.cmd = argv[2];
+	pipex->cmd2.cmd = argv[3];
 	pipex->file2 = argv[4];
 	pipex->env = env;
 	if (get_file(pipex) == 1)
@@ -76,6 +76,9 @@ int	main(int argc, char **argv, char **env)
 
 	if (parse_arg(&pipex, argc, argv, env) == 1)
 		return (0);
-	printf("%s\n%s\n%s\n%s\n", pipex.file1, pipex.cmd1, pipex.cmd2, pipex.file2);
+	if (get_command(&pipex) == 1)
+		return (0);
+	if (first_command(&pipex) == 1)
+		return (0);
 	return (0);
 }

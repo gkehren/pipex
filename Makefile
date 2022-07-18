@@ -6,11 +6,11 @@
 #    By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/17 16:50:58 by gkehren           #+#    #+#              #
-#    Updated: 2022/07/17 16:52:12 by gkehren          ###   ########.fr        #
+#    Updated: 2022/07/18 18:15:59 by gkehren          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FILES:=	pipex
+FILES:=	pipex pipex_utils get_command tools split
 FILES_BONUS:=
 
 NAME:= pipex
