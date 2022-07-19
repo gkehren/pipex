@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 14:57:37 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/19 15:12:19 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/19 19:58:47 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 {
 	if (argc != 5)
-		return (write(1, "Error\n - Fill all the arguments\n", 33), 1);
+		return (write(1, "\033[31mError\nUsage: \
+./pipex <file1> <cmd1> <cmd2> <file2>\n", 57), 1);
 	pipex->file1 = argv[1];
 	pipex->cmd1.cmd = argv[2];
 	pipex->cmd2.cmd = argv[3];
