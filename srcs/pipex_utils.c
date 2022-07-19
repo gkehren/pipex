@@ -6,44 +6,92 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 16:50:59 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/18 18:20:19 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/19 15:12:59 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-pid_t	exec_command(char *const *c, char **env)
+char	*path_command(char *cmd, char **env)
 {
-	pid_t	ch_pid;
+	char	**paths;
+	char	*path;
+	int		i;
+	char	*part_path;
 
-	ch_pid = fork();
-	if (ch_pid == -1)
+	i = 0;
+	while (ft_strnstr(env[i], "PATH", 4) == 0)
+		i++;
+	paths = ft_split(env[i] + 5, ':');
+	i = 0;
+	while (paths[i])
 	{
-		perror("fork");
-		exit(EXIT_FAILURE);
+		part_path = ft_strjoin(paths[i], "/");
+		path = ft_strjoin(part_path, cmd);
+		free(part_path);
+		if (access(path, F_OK) == 0)
+			return (path);
+		free(path);
+		i++;
 	}
-	if (ch_pid == 0)
-	{
-		execve(c[0], c, env);
-		perror("execve");
-		exit(EXIT_FAILURE);
-	}
-	else
-		return (ch_pid);
+	i = -1;
+	while (paths[++i])
+		free(paths[i]);
+	free(paths);
 	return (0);
 }
 
-int	first_command(t_pipex *pipex)
+int	get_command(t_pipex *pipex)
 {
-	pid_t		child;
-	int			wstatus;
-	char *const	c[3] = {pipex->cmd1.path, pipex->cmd1.arg, NULL};
+	int	i;
 
-	child = exec_command(c, pipex->env);
-	if (waitpid(child, &wstatus, WUNTRACED | WCONTINUED) == -1)
+	pipex->cmd1.arg = ft_split(pipex->cmd1.cmd, ' ');
+	pipex->cmd2.arg = ft_split(pipex->cmd2.cmd, ' ');
+	pipex->cmd1.path = path_command(pipex->cmd1.arg[0], pipex->env);
+	i = -1;
+	if (!pipex->cmd1.path)
 	{
-		perror("waitpid");
-		exit(EXIT_FAILURE);
+		while (pipex->cmd1.arg[++i])
+			free(pipex->cmd1.arg[i]);
+		free(pipex->cmd1.arg);
+		error();
+	}
+	pipex->cmd2.path = path_command(pipex->cmd2.arg[0], pipex->env);
+	i = -1;
+	if (!pipex->cmd1.path)
+	{
+		while (pipex->cmd1.arg[++i])
+			free(pipex->cmd1.arg[i]);
+		free(pipex->cmd1.arg);
+		error();
 	}
 	return (0);
+}
+
+void	child_process(t_pipex *pipex)
+{
+	int	infile;
+
+	infile = open(pipex->file1, O_RDONLY, 0777);
+	if (infile == -1)
+		error();
+	dup2(pipex->fd[1], STDOUT_FILENO);
+	dup2(infile, STDIN_FILENO);
+	close(pipex->fd[0]);
+	if (execve(pipex->cmd1.path, pipex->cmd1.arg, pipex->env) == -1)
+		error();
+}
+
+void	parent_process(t_pipex *pipex)
+{
+	int	outfile;
+
+	outfile = open(pipex->file2, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (outfile == -1)
+		error();
+	dup2(pipex->fd[0], STDIN_FILENO);
+	dup2(outfile, STDOUT_FILENO);
+	close(pipex->fd[1]);
+	if (execve(pipex->cmd2.path, pipex->cmd2.arg, pipex->env) == -1)
+		error();
 }

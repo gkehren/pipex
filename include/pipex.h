@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 15:06:47 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/18 18:16:40 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/19 15:13:32 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@
 typedef struct s_cmd
 {
 	char		*cmd;
-	char		*name;
 	char		*path;
-	char		*arg;
+	char		**arg;
 	char *const	*c;
 }	t_cmd;
 
@@ -38,6 +37,7 @@ typedef struct s_pipex
 	char	*file1;
 	int		fd1;
 	int		fd2;
+	int		fd[2];
 	char	*file2;
 	t_cmd	cmd1;
 	t_cmd	cmd2;
@@ -45,8 +45,11 @@ typedef struct s_pipex
 
 /*******UTILS*******/
 
-int		first_command(t_pipex *pipex);
+void	parent_process(t_pipex *pipex);
+void	child_process(t_pipex *pipex);
+int		exec_command(t_pipex *pipex);
 int		get_command(t_pipex *pipex);
+void	error(void);
 
 /*******TOOLS*******/
 
