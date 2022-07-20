@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 16:50:59 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/19 15:26:10 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/20 14:23:19 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,22 +76,24 @@ void	child_process(t_pipex *pipex)
 	if (infile == -1)
 		error();
 	dup2(pipex->fd[1], STDOUT_FILENO);
-	dup2(infile, STDIN_FILENO);
 	close(pipex->fd[0]);
+	dup2(infile, STDIN_FILENO);
 	if (execve(pipex->cmd1.path, pipex->cmd1.arg, pipex->env) == -1)
 		error();
+	close(infile);
 }
 
 void	parent_process(t_pipex *pipex)
 {
 	int	outfile;
 
-	outfile = open(pipex->file2, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	outfile = open(pipex->file2, O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	if (outfile == -1)
 		error();
 	dup2(pipex->fd[0], STDIN_FILENO);
-	dup2(outfile, STDOUT_FILENO);
 	close(pipex->fd[1]);
+	dup2(outfile, STDOUT_FILENO);
 	if (execve(pipex->cmd2.path, pipex->cmd2.arg, pipex->env) == -1)
 		error();
+	close(outfile);
 }

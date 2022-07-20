@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 14:57:37 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/19 19:58:47 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/07/20 14:13:13 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,6 @@ int	main(int argc, char **argv, char **env)
 		return (0);
 	if (exec_command(&pipex) == 1)
 		return (0);
+	printf("TEST\n");
 	return (0);
 }
