@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 14:57:37 by gkehren           #+#    #+#             */
-/*   Updated: 2022/07/20 14:13:13 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/02 13:16:57 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,19 @@ int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 	pipex->file2 = argv[4];
 	pipex->env = env;
 	return (0);
+}
+
+void	freestr(char **s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		free(s[i]);
+		i++;
+	}
+	free(s);
 }
 
 void	error(void)
@@ -60,6 +73,5 @@ int	main(int argc, char **argv, char **env)
 		return (0);
 	if (exec_command(&pipex) == 1)
 		return (0);
-	printf("TEST\n");
 	return (0);
 }
