@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 16:50:59 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/02 13:07:49 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/03 14:29:45 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ int	get_command(t_pipex *pipex)
 {
 	pipex->cmd1.arg = ft_split(pipex->cmd1.cmd, ' ');
 	pipex->cmd2.arg = ft_split(pipex->cmd2.cmd, ' ');
+	if (!pipex->cmd1.arg[0] || !pipex->cmd2.arg[0])
+		return (freestr(pipex->cmd1.arg), freestr(pipex->cmd2.arg), 1);
 	pipex->cmd1.path = path_command(pipex->cmd1.arg[0], pipex->env);
 	if (!pipex->cmd1.path)
 	{

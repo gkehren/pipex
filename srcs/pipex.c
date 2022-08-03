@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 14:57:37 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/02 13:16:57 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/03 14:28:27 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,10 +68,11 @@ int	main(int argc, char **argv, char **env)
 	if (pipe(pipex.fd) == -1)
 		error();
 	if (parse_arg(&pipex, argc, argv, env) == 1)
-		return (0);
+		return (1);
 	if (get_command(&pipex) == 1)
-		return (0);
+		return (write(1, "\033[31mError\nUsage: \
+./pipex <file1> <cmd1> <cmd2> <file2>\n", 57), 1);
 	if (exec_command(&pipex) == 1)
-		return (0);
+		return (1);
 	return (0);
 }
