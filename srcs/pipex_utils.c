@@ -6,11 +6,19 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 16:50:59 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/12 14:45:17 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/12 15:21:05 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+void	enverror(t_pipex *pipex)
+{
+	write(2, "\033[31mError: unset env\n", 23);
+	freestr(pipex->cmd1.arg);
+	freestr(pipex->cmd2.arg);
+	exit(EXIT_FAILURE);
+}
 
 char	*path_command(t_pipex *pipex, char *cmd, char **env)
 {
@@ -23,12 +31,7 @@ char	*path_command(t_pipex *pipex, char *cmd, char **env)
 	while (ft_strnstr(env[i], "PATH", 4) == 0)
 	{
 		if (!env[i])
-		{
-			write(2, "Error: unset env\n", 18);
-			freestr(pipex->cmd1.arg);
-			freestr(pipex->cmd2.arg);
-			exit(EXIT_FAILURE);
-		}
+			enverror(pipex);
 		i++;
 	}
 	paths = ft_split(env[i] + 5, ':');
@@ -43,8 +46,7 @@ char	*path_command(t_pipex *pipex, char *cmd, char **env)
 		free(path);
 		i++;
 	}
-	freestr(paths);
-	return (0);
+	return (freestr(paths), NULL);
 }
 
 int	get_command(t_pipex *pipex)
@@ -58,7 +60,7 @@ int	get_command(t_pipex *pipex)
 	{
 		freestr(pipex->cmd1.arg);
 		freestr(pipex->cmd2.arg);
-		write(2, "Error: command not found\n", 26);
+		write(2, "\033[31mError: command not found\n", 31);
 		exit(127);
 	}
 	pipex->cmd2.path = path_command(pipex, pipex->cmd2.arg[0], pipex->env);
@@ -67,7 +69,7 @@ int	get_command(t_pipex *pipex)
 		freestr(pipex->cmd1.arg);
 		freestr(pipex->cmd2.arg);
 		free(pipex->cmd1.path);
-		write(2, "Error: command not found\n", 26);
+		write(2, "\033[31mError: command not found\n", 31);
 		exit(127);
 	}
 	return (0);
@@ -79,18 +81,12 @@ void	child_process(t_pipex *pipex)
 
 	infile = open(pipex->file1, O_RDONLY, 0777);
 	if (infile == -1)
-		error();
+		error(pipex);
 	dup2(pipex->fd[1], STDOUT_FILENO);
 	close(pipex->fd[0]);
 	dup2(infile, STDIN_FILENO);
 	if (execve(pipex->cmd1.path, pipex->cmd1.arg, pipex->env) == -1)
-	{
-		freestr(pipex->cmd1.arg);
-		freestr(pipex->cmd2.arg);
-		free(pipex->cmd1.path);
-		free(pipex->cmd2.path);
-		error();
-	}
+		error(pipex);
 	close(infile);
 }
 
@@ -100,23 +96,11 @@ void	parent_process(t_pipex *pipex)
 
 	outfile = open(pipex->file2, O_TRUNC | O_CREAT | O_RDWR, 0000644);
 	if (outfile == -1)
-	{
-		freestr(pipex->cmd1.arg);
-		freestr(pipex->cmd2.arg);
-		free(pipex->cmd1.path);
-		free(pipex->cmd2.path);
-		error();
-	}
+		error(pipex);
 	dup2(pipex->fd[0], STDIN_FILENO);
 	close(pipex->fd[1]);
 	dup2(outfile, STDOUT_FILENO);
 	if (execve(pipex->cmd2.path, pipex->cmd2.arg, pipex->env) == -1)
-	{
-		freestr(pipex->cmd1.arg);
-		freestr(pipex->cmd2.arg);
-		free(pipex->cmd1.path);
-		free(pipex->cmd2.path);
-		error();
-	}
+		error(pipex);
 	close(outfile);
 }
