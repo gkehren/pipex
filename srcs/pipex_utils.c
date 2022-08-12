@@ -6,13 +6,13 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/18 16:50:59 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/03 14:29:45 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/12 14:45:17 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-char	*path_command(char *cmd, char **env)
+char	*path_command(t_pipex *pipex, char *cmd, char **env)
 {
 	char	**paths;
 	char	*path;
@@ -21,7 +21,16 @@ char	*path_command(char *cmd, char **env)
 
 	i = 0;
 	while (ft_strnstr(env[i], "PATH", 4) == 0)
+	{
+		if (!env[i])
+		{
+			write(2, "Error: unset env\n", 18);
+			freestr(pipex->cmd1.arg);
+			freestr(pipex->cmd2.arg);
+			exit(EXIT_FAILURE);
+		}
 		i++;
+	}
 	paths = ft_split(env[i] + 5, ':');
 	i = 0;
 	while (paths[i])
@@ -44,7 +53,7 @@ int	get_command(t_pipex *pipex)
 	pipex->cmd2.arg = ft_split(pipex->cmd2.cmd, ' ');
 	if (!pipex->cmd1.arg[0] || !pipex->cmd2.arg[0])
 		return (freestr(pipex->cmd1.arg), freestr(pipex->cmd2.arg), 1);
-	pipex->cmd1.path = path_command(pipex->cmd1.arg[0], pipex->env);
+	pipex->cmd1.path = path_command(pipex, pipex->cmd1.arg[0], pipex->env);
 	if (!pipex->cmd1.path)
 	{
 		freestr(pipex->cmd1.arg);
@@ -52,7 +61,7 @@ int	get_command(t_pipex *pipex)
 		write(2, "Error: command not found\n", 26);
 		exit(127);
 	}
-	pipex->cmd2.path = path_command(pipex->cmd2.arg[0], pipex->env);
+	pipex->cmd2.path = path_command(pipex, pipex->cmd2.arg[0], pipex->env);
 	if (!pipex->cmd2.path)
 	{
 		freestr(pipex->cmd1.arg);
