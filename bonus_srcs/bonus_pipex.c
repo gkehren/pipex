@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:10 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 16:52:32 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/15 21:03:08 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,38 +33,51 @@ int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 	return (0);
 }
 
-int	exec_all(t_pipex *pipex)
+void	child_bonus(t_pipex *pipex, int i)
 {
-	int		i;
 	pid_t	pid;
+	int		fd[2];
 
-	i = 0;
-	while (i < pipex->cmd_count)
+	if (pipe(fd) == -1)
+		error(pipex);
+	pid = fork();
+	if (pid == -1)
+		error(pipex);
+	if (pid == 0)
 	{
-		pid = fork();
-		if (pid == -1)
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		if (execve(pipex->cmd[i].path, pipex->cmd[i].arg, pipex->env) == -1)
 			error(pipex);
-		else if (pid == 0)
-			job(pipex);
-		else
-			parent_process(pipex);
-		i++;
 	}
-	waitforall();
-	return (0);
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		waitpid(pid, NULL, 0);
+	}
 }
 
 int	exec_command(t_pipex *pipex)
 {
-	pid_t		child;
+	int	infile;
+	int	outfile;
+	int	i;
 
-	child = fork();
-	if (child == -1)
+	// CHECK HERE_DOC FIRST
+	i = 2;
+	infile = open(pipex->file1, O_RDONLY, 0777);
+	if (infile == -1)
 		error(pipex);
-	if (child == 0)
-		child_process(pipex);
-	waitpid(child, NULL, 0);
-	exec_all(pipex);
+	outfile = open(pipex->file2, O_TRUNC | O_CREAT | O_RDWR, 0000644);
+	if (outfile == -1)
+		error(pipex);
+	dup2(infile, STDIN_FILENO);
+	while (i < pipex->cmd_count + 1)
+		child_bonus(pipex, i++);
+	dup2(outfile, STDOUT_FILENO);
+	if (execve(pipex->cmd[pipex->cmd_count - 1].path, pipex->cmd[pipex->cmd_count - 1].arg, pipex->env) == -1)
+		error(pipex);
 	return (0);
 }
 
@@ -72,11 +85,6 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	pipex;
 
-	if (pipe(pipex.fd) == -1)
-	{
-		perror("\033[31mError");
-		exit(EXIT_FAILURE);
-	}
 	if (parse_arg(&pipex, argc, argv, env) == 1)
 		return (1);
 	if (get_command(&pipex) == 1)
@@ -89,6 +97,6 @@ int	main(int argc, char **argv, char **env)
 	//freestr(pipex.cmd1.arg);
 	//freestr(pipex.cmd2.arg);
 	// need to free all the struct cmd[].path and arg
-	free(pipex.cmd);
+	//free(pipex.cmd);
 	return (0);
 }

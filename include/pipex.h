@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 15:06:47 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 16:38:26 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/15 20:00:24 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,11 @@ typedef struct s_pipex
 
 void	parent_process(t_pipex *pipex);
 void	child_process(t_pipex *pipex);
+void	child_bonus(t_pipex *pipex, int i);
 int		exec_command(t_pipex *pipex);
 int		get_command(t_pipex *pipex);
 void	freestr(char **s);
 void	error(t_pipex *pipex);
-void	waitforall(void);
-void	job(t_pipex *pipex);
 
 /*******TOOLS*******/
 
