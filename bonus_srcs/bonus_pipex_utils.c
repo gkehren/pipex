@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:15 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 15:15:07 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/15 16:47:44 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,26 +51,23 @@ char	*path_command(t_pipex *pipex, char *cmd, char **env)
 
 int	get_command(t_pipex *pipex)
 {
-	pipex->cmd1.arg = ft_split(pipex->cmd1.cmd, ' ');
-	pipex->cmd2.arg = ft_split(pipex->cmd2.cmd, ' ');
-	if (!pipex->cmd1.arg[0] || !pipex->cmd2.arg[0])
-		return (freestr(pipex->cmd1.arg), freestr(pipex->cmd2.arg), 1);
-	pipex->cmd1.path = path_command(pipex, pipex->cmd1.arg[0], pipex->env);
-	if (!pipex->cmd1.path)
+	int	i;
+
+	i = 0;
+	while (i < pipex->cmd_count)
 	{
-		freestr(pipex->cmd1.arg);
-		freestr(pipex->cmd2.arg);
-		write(2, "\033[31mError: command not found\n", 31);
-		exit(127);
-	}
-	pipex->cmd2.path = path_command(pipex, pipex->cmd2.arg[0], pipex->env);
-	if (!pipex->cmd2.path)
-	{
-		freestr(pipex->cmd1.arg);
-		freestr(pipex->cmd2.arg);
-		free(pipex->cmd1.path);
-		write(2, "\033[31mError: command not found\n", 31);
-		exit(127);
+		pipex->cmd[i].arg = ft_split(pipex->cmd[0].cmd, ' ');
+		if (!pipex->cmd[i].arg[0] || !pipex->cmd[i].arg)
+			return (freestr(pipex->cmd[i].arg), 1);
+		pipex->cmd[i].path = path_command(pipex, pipex->cmd[i].arg[0], pipex->env);
+		if (!pipex->cmd[i].path)
+		{
+			freestr(pipex->cmd1.arg);
+			freestr(pipex->cmd2.arg);
+			write(2, "\033[31mError: command not found\n", 31);
+			exit(127);
+		}
+		i++;
 	}
 	return (0);
 }
@@ -85,7 +82,7 @@ void	child_process(t_pipex *pipex)
 	dup2(pipex->fd[1], STDOUT_FILENO);
 	close(pipex->fd[0]);
 	dup2(infile, STDIN_FILENO);
-	if (execve(pipex->cmd1.path, pipex->cmd1.arg, pipex->env) == -1)
+	if (execve(pipex->cmd[0].path, pipex->cmd[0].arg, pipex->env) == -1)
 		error(pipex);
 	close(infile);
 }
@@ -100,7 +97,7 @@ void	parent_process(t_pipex *pipex)
 	dup2(pipex->fd[0], STDIN_FILENO);
 	close(pipex->fd[1]);
 	dup2(outfile, STDOUT_FILENO);
-	if (execve(pipex->cmd2.path, pipex->cmd2.arg, pipex->env) == -1)
+	if (execve(pipex->cmd[pipex->cmd_count - 1].path, pipex->cmd[pipex->cmd_count - 1].arg, pipex->env) == -1)
 		error(pipex);
 	close(outfile);
 }

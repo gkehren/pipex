@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 15:06:47 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 16:20:45 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/15 16:38:26 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ typedef struct s_pipex
 	int		fd2;
 	int		fd[2];
 	char	*file2;
+	int		cmd_count;
+	t_cmd	*cmd;
 	t_cmd	cmd1;
 	t_cmd	cmd2;
 }	t_pipex;
