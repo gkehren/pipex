@@ -6,20 +6,20 @@
 #    By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/17 16:50:58 by gkehren           #+#    #+#              #
-#    Updated: 2022/07/19 19:43:21 by gkehren          ###   ########.fr        #
+#    Updated: 2022/08/15 16:22:54 by gkehren          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FILES:=	pipex pipex_utils tools split
-FILES_BONUS:=
+FILES_BONUS:= bonus_pipex bonus_pipex_utils bonus_tools bonus_split bonus_other
 
 NAME:= pipex
-BONUS:= pipex_bonus
+BONUS:= bonus
 
 # ------------------
 CC:=clang
 SRCPATH:=srcs/
-BONUSPATH:=bonus/
+BONUSPATH:=bonus_srcs/
 HDRPATH:=include/
 CCHPATH:=obj/
 CCHPATH_BONUS:=obj/
@@ -56,14 +56,14 @@ ${CCHPATH}%.o: ${SRCPATH}%.c | ${CCHF}
 	@echo ${PURPLE} " - Compiling $< into $@" ${EOC}
 	@${CC} ${CFLAGS} -c $< -o $@
 
-#${BONUS}: ${OBJ_BONUS}
-#	@echo ${CYAN} " - Compiling $@" $(RED)
-#	@${CC} ${CFLAGS} ${SRC_BONUS} -o ${BONUS}
-#	@echo $(GREEN) " - OK" $(EOC)
+${BONUS}: ${OBJ_BONUS}
+	@echo ${CYAN} " - Compiling $@" $(RED)
+	@${CC} ${CFLAGS} ${SRC_BONUS} -o ${BONUS}
+	@echo $(GREEN) " - OK" $(EOC)
 
-#${CCHPATH_BONUS}%.o: ${BONUSPATH}%.c | ${CCHF}
-#	@echo ${PURPLE} " - Compiling $< into $@" ${EOC}
-#	@${CC} ${CFLAGS} -c $< -o $@
+${CCHPATH_BONUS}%.o: ${BONUSPATH}%.c | ${CCHF}
+	@echo ${PURPLE} " - Compiling $< into $@" ${EOC}
+	@${CC} ${CFLAGS} -c $< -o $@
 
 %.c:
 	@echo ${RED}"Missing file : $@" ${EOC}
