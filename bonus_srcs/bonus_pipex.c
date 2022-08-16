@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:10 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/16 04:21:45 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/16 20:16:51 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 		pipex->cmd[i].cmd = argv[i + 2];
 		i++;
 	}
-	pipex->file2 = argv[4];
+	pipex->file2 = argv[argc - 1];
 	pipex->env = env;
 	pipex->cmd_count = argc - 3;
 	pipex->argc = argc;
