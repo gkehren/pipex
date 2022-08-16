@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 15:06:47 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 20:00:24 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/16 04:21:59 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_cmd
 
 typedef struct s_pipex
 {
+	int		argc;
 	char	**env;
 	char	*file1;
 	int		fd1;
@@ -57,10 +58,12 @@ void	error(t_pipex *pipex);
 
 /*******TOOLS*******/
 
+int		get_next_line(char **line);
 int		ft_strlen(const char *s);
 char	**ft_split(char const *s, char c);
 void	*ft_memalloc(size_t size);
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
 
 #endif

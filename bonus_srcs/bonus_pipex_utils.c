@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:15 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 21:01:04 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/16 04:13:50 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,33 +71,3 @@ int	get_command(t_pipex *pipex)
 	}
 	return (0);
 }
-
-//void	child_process(t_pipex *pipex)
-//{
-//	int	infile;
-
-//	infile = open(pipex->file1, O_RDONLY, 0777);
-//	if (infile == -1)
-//		error(pipex);
-//	dup2(pipex->fd[1], STDOUT_FILENO);
-//	close(pipex->fd[0]);
-//	dup2(infile, STDIN_FILENO);
-//	if (execve(pipex->cmd[0].path, pipex->cmd[0].arg, pipex->env) == -1)
-//		error(pipex);
-//	close(infile);
-//}
-
-//void	parent_process(t_pipex *pipex)
-//{
-//	int	outfile;
-
-//	outfile = open(pipex->file2, O_TRUNC | O_CREAT | O_RDWR, 0000644);
-//	if (outfile == -1)
-//		error(pipex);
-//	dup2(pipex->fd[0], STDIN_FILENO);
-//	close(pipex->fd[1]);
-//	dup2(outfile, STDOUT_FILENO);
-//	if (execve(pipex->cmd[pipex->cmd_count - 1].path, pipex->cmd[pipex->cmd_count - 1].arg, pipex->env) == -1)
-//		error(pipex);
-//	close(outfile);
-//}

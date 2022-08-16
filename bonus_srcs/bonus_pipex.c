@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:10 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/15 21:03:08 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/16 04:21:45 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
 	pipex->file2 = argv[4];
 	pipex->env = env;
 	pipex->cmd_count = argc - 3;
+	pipex->argc = argc;
 	return (0);
 }
 
@@ -64,8 +65,7 @@ int	exec_command(t_pipex *pipex)
 	int	outfile;
 	int	i;
 
-	// CHECK HERE_DOC FIRST
-	i = 2;
+	i = 0;
 	infile = open(pipex->file1, O_RDONLY, 0777);
 	if (infile == -1)
 		error(pipex);
@@ -73,7 +73,7 @@ int	exec_command(t_pipex *pipex)
 	if (outfile == -1)
 		error(pipex);
 	dup2(infile, STDIN_FILENO);
-	while (i < pipex->cmd_count + 1)
+	while (i < pipex->cmd_count - 1)
 		child_bonus(pipex, i++);
 	dup2(outfile, STDOUT_FILENO);
 	if (execve(pipex->cmd[pipex->cmd_count - 1].path, pipex->cmd[pipex->cmd_count - 1].arg, pipex->env) == -1)
