@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 16:18:30 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/17 02:59:19 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/17 20:04:46 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,21 @@ void	freestr(char **s)
 	free(s);
 }
 
+void	freeall(t_pipex *pipex, int i)
+{
+	int	j;
+
+	j = 0;
+	while (j < i)
+	{
+		freestr(pipex->cmd[j].arg);
+		free(pipex->cmd[j].path);
+		j++;
+	}
+	freestr(pipex->cmd[j].arg);
+	free(pipex->cmd);
+}
+
 void	error(t_pipex *pipex)
 {
 	int	i;
@@ -77,6 +92,7 @@ void	error(t_pipex *pipex)
 		freestr(pipex->cmd[i].arg);
 		i++;
 	}
+	free(pipex->cmd);
 	perror("\033[31mError");
 	exit(EXIT_FAILURE);
 }

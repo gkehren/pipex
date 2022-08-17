@@ -17,7 +17,7 @@ NAME:= pipex
 BONUS:= pipex_bonus
 
 # ------------------
-CC:=clang
+CC:=gcc
 SRCPATH:=srcs/
 BONUSPATH:=bonus_srcs/
 HDRPATH:=include/
