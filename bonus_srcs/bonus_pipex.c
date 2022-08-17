@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:10 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/16 20:16:51 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/17 02:27:33 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,78 @@ int	exec_command(t_pipex *pipex)
 	return (0);
 }
 
+void	exec_here_doc(char *limiter, int argc, t_pipex *pipex)
+{
+	pid_t	reader;
+	int		fd[2];
+	char	*line;
+
+	if (argc < 6)
+	{
+		write(2, "\033[31mError\nUsage: \
+./pipex <file1> <cmd1> <cmd2> <file2>\n", 57);
+		error(pipex);
+	}
+	if (pipe(fd) == -1)
+		error(pipex);
+	reader = fork();
+	if (reader == 0)
+	{
+		close(fd[0]);
+		while (get_next_line(&line))
+		{
+			if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+				exit(EXIT_SUCCESS);
+			write(fd[1], line, ft_strlen(line));
+		}
+	}
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		wait(NULL);
+	}
+}
+
+void	here_doc(int argc, char **argv, t_pipex *pipex)
+{
+	int	outfile;
+	int	i;
+
+	i = 1;
+	outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0777);
+	exec_here_doc(argv[2], argc, pipex);
+	while (i < argc - 4)
+		child_bonus(pipex, i++);
+	dup2(outfile, STDOUT_FILENO);
+	if (execve(pipex->cmd[pipex->cmd_count - 1].path, pipex->cmd[pipex->cmd_count - 1].arg, pipex->env) == -1)
+		error(pipex);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_pipex	pipex;
 
 	if (parse_arg(&pipex, argc, argv, env) == 1)
 		return (1);
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		get_command_doc(&pipex);
+		here_doc(argc, argv, &pipex);
+	}
+	//int	i = 0;
+	//while (i < pipex.cmd_count)
+	//{
+	//	printf("cmd%d: %s\n", i, pipex.cmd[i].cmd);
+	//	i++;
+	//}
 	if (get_command(&pipex) == 1)
 		return (write(2, "\033[31mError\nUsage: \
 ./pipex <file1> <cmd1> <cmd2> <file2>\n", 57), 1);
 	if (exec_command(&pipex) == 1)
 		return (1);
+
+
 	//free(pipex.cmd1.path);
 	//free(pipex.cmd2.path);
 	//freestr(pipex.cmd1.arg);

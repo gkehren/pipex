@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/17 15:06:47 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/16 04:21:59 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/17 02:16:28 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ void	child_process(t_pipex *pipex);
 void	child_bonus(t_pipex *pipex, int i);
 int		exec_command(t_pipex *pipex);
 int		get_command(t_pipex *pipex);
+int		get_command_doc(t_pipex *pipex);
 void	freestr(char **s);
 void	error(t_pipex *pipex);
 

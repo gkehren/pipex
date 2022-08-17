@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:15 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/16 04:13:50 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/17 02:16:49 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,29 @@ int	get_command(t_pipex *pipex)
 	int	i;
 
 	i = 0;
+	while (i < pipex->cmd_count)
+	{
+		pipex->cmd[i].arg = ft_split(pipex->cmd[i].cmd, ' ');
+		if (!pipex->cmd[i].arg[0] || !pipex->cmd[i].arg)
+			return (freestr(pipex->cmd[i].arg), 1);
+		pipex->cmd[i].path = path_command(pipex, pipex->cmd[i].arg[0], pipex->env);
+		if (!pipex->cmd[i].path)
+		{
+			freestr(pipex->cmd1.arg);
+			freestr(pipex->cmd2.arg);
+			write(2, "\033[31mError: command not found\n", 31);
+			exit(127);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	get_command_doc(t_pipex *pipex)
+{
+	int	i;
+
+	i = 1;
 	while (i < pipex->cmd_count)
 	{
 		pipex->cmd[i].arg = ft_split(pipex->cmd[i].cmd, ' ');
