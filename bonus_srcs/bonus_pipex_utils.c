@@ -6,11 +6,33 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/15 14:50:15 by gkehren           #+#    #+#             */
-/*   Updated: 2022/08/17 02:16:49 by gkehren          ###   ########.fr       */
+/*   Updated: 2022/08/17 03:02:50 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
+
+int	parse_arg(t_pipex *pipex, int argc, char **argv, char **env)
+{
+	int	i;
+
+	i = 0;
+	if (argc < 5)
+		return (write(2, "\033[31mError\nUsage: \
+./pipex <file1> <cmd1> <cmd2> <file2>\n", 57), 1);
+	pipex->file1 = argv[1];
+	pipex->cmd = malloc(sizeof(t_cmd) * argc - 3);
+	while (i < argc - 3)
+	{
+		pipex->cmd[i].cmd = argv[i + 2];
+		i++;
+	}
+	pipex->file2 = argv[argc - 1];
+	pipex->env = env;
+	pipex->cmd_count = argc - 3;
+	pipex->argc = argc;
+	return (0);
+}
 
 void	enverror(t_pipex *pipex)
 {
@@ -59,7 +81,8 @@ int	get_command(t_pipex *pipex)
 		pipex->cmd[i].arg = ft_split(pipex->cmd[i].cmd, ' ');
 		if (!pipex->cmd[i].arg[0] || !pipex->cmd[i].arg)
 			return (freestr(pipex->cmd[i].arg), 1);
-		pipex->cmd[i].path = path_command(pipex, pipex->cmd[i].arg[0], pipex->env);
+		pipex->cmd[i].path = path_command(pipex,
+				pipex->cmd[i].arg[0], pipex->env);
 		if (!pipex->cmd[i].path)
 		{
 			freestr(pipex->cmd1.arg);
@@ -82,7 +105,8 @@ int	get_command_doc(t_pipex *pipex)
 		pipex->cmd[i].arg = ft_split(pipex->cmd[i].cmd, ' ');
 		if (!pipex->cmd[i].arg[0] || !pipex->cmd[i].arg)
 			return (freestr(pipex->cmd[i].arg), 1);
-		pipex->cmd[i].path = path_command(pipex, pipex->cmd[i].arg[0], pipex->env);
+		pipex->cmd[i].path = path_command(pipex,
+				pipex->cmd[i].arg[0], pipex->env);
 		if (!pipex->cmd[i].path)
 		{
 			freestr(pipex->cmd1.arg);

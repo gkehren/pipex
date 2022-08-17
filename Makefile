@@ -6,7 +6,7 @@
 #    By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/17 16:50:58 by gkehren           #+#    #+#              #
-#    Updated: 2022/08/16 03:57:50 by gkehren          ###   ########.fr        #
+#    Updated: 2022/08/17 02:45:29 by gkehren          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ FILES:=	pipex pipex_utils tools split
 FILES_BONUS:= bonus_pipex bonus_pipex_utils bonus_tools bonus_split bonus_other
 
 NAME:= pipex
-BONUS:= bonus
+BONUS:= pipex_bonus
 
 # ------------------
 CC:=clang
@@ -56,6 +56,8 @@ ${CCHPATH}%.o: ${SRCPATH}%.c | ${CCHF}
 	@echo ${PURPLE} " - Compiling $< into $@" ${EOC}
 	@${CC} ${CFLAGS} -c $< -o $@
 
+bonus:	${BONUS}
+
 ${BONUS}: ${OBJ_BONUS}
 	@echo ${CYAN} " - Compiling $@" $(RED)
 	@${CC} ${CFLAGS} ${SRC_BONUS} -o ${BONUS}
@@ -85,4 +87,4 @@ fclean:	clean
 re:	fclean
 	@${MAKE} all
 
-.PHONY:	all clean fclean re
+.PHONY:	all clean fclean re bonus
